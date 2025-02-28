@@ -21,7 +21,7 @@ BALL_START_POS: Any = None
 BALL_POS: Any = None
 
 FONT = pygame.font.Font("Futura.ttc", 72)
-WINNER_TEXT = FONT.render("You Win!!!", True, (255, 255, 255))
+WINNER_TEXT = FONT.render("You Win!!!", True, (255, 255, 255), (0, 0, 0))
 WINNER_TEXT_RECT = WINNER_TEXT.get_rect(center=(1280 / 2, 720 / 2))
 
 
