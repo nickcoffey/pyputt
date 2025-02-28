@@ -47,13 +47,30 @@ def move_ball() -> None:
         PLAYER_POS.x += BALL_SPEED * DELTA_TIME
 
 
-def draw_course() -> Rect:
-    return pygame.draw.rect(
-        SCREEN,
-        "brown",
-        pygame.Rect(SCREEN.get_width() / 4, SCREEN.get_height() / 4, 20, 20),
-        BALL_SIZE,
-    )
+COURSE = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+]
+
+
+def draw_course():
+    box_size = 80
+    for y, row in enumerate(COURSE):
+        for x, value in enumerate(row):
+            if value == 1:
+                pygame.draw.rect(
+                    SCREEN,
+                    "brown",
+                    pygame.Rect(x * box_size, y * box_size, 80, 80),
+                    BALL_SIZE,
+                )
 
 
 def draw_hole() -> Rect:
@@ -70,13 +87,13 @@ while RUNNING:
 
     # fill the screen with a color to wipe away anything from last frame
     SCREEN.fill("green")
-    course = draw_course()
+    draw_course()
     ball = pygame.draw.circle(SCREEN, "white", PLAYER_POS, BALL_SIZE)
 
     draw_hole()
     move_ball()
     check_bounds()
-    detect_collision(course, ball)
+    # detect_collision(course, ball)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
