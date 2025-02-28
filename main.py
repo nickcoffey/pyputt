@@ -1,7 +1,14 @@
 # Example file showing a circle moving on screen
 import pygame
 import json
+
+from typing import Any
+from pygame.math import Vector2
 from pygame.rect import Rect
+
+
+with open("course.json", encoding="utf-8") as f_in:
+    COURSE = json.load(f_in)
 
 # pygame setup
 pygame.init()
@@ -13,8 +20,8 @@ DELTA_TIME = 0
 BALL_SPEED = 600
 BALL_SIZE = 10
 BALL_RADIUS = BALL_SIZE / 2
-PLAYER_START = pygame.Vector2(BALL_SIZE + 20, SCREEN.get_height() - BALL_SIZE - 20)
-PLAYER_POS = pygame.Vector2(PLAYER_START)
+PLAYER_START: Any = None  # type: ignore
+PLAYER_POS: Any = None  # type: ignore
 
 
 def check_bounds() -> None:
@@ -48,11 +55,8 @@ def move_ball() -> None:
         PLAYER_POS.x += BALL_SPEED * DELTA_TIME
 
 
-with open("course.json", encoding="utf-8") as f_in:
-    COURSE = json.load(f_in)
-
-
 def draw_course():
+    global PLAYER_START, PLAYER_POS
     box_size = 40
     for y, row in enumerate(COURSE):
         for x, value in enumerate(row):
@@ -63,10 +67,13 @@ def draw_course():
                     pygame.Rect(x * box_size, y * box_size, box_size, box_size),
                     box_size,
                 )
+            if PLAYER_START is None and value == 2:
+                PLAYER_START = Vector2((x * box_size) + (BALL_SIZE * 2), y * box_size)
+                PLAYER_POS = Vector2(PLAYER_START)
 
 
 def draw_hole() -> Rect:
-    hole_pos = pygame.Vector2(SCREEN.get_width() - 120, SCREEN.get_height() - 120)
+    hole_pos = Vector2(SCREEN.get_width() - 120, SCREEN.get_height() - 120)
     return pygame.draw.circle(SCREEN, "black", hole_pos, 20)
 
 
