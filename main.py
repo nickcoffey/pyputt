@@ -20,8 +20,8 @@ DELTA_TIME = 0
 BALL_SPEED = 600
 BALL_SIZE = 10
 BALL_RADIUS = BALL_SIZE / 2
-PLAYER_START: Any = None  # type: ignore
-PLAYER_POS: Any = None  # type: ignore
+PLAYER_START: Any = None
+PLAYER_POS: Any = None
 
 
 def check_bounds() -> None:
@@ -37,10 +37,13 @@ def check_bounds() -> None:
         PLAYER_POS.y = SCREEN.get_height() - BALL_SIZE
 
 
-def detect_collision(course: list[Rect], temp_ball: Rect) -> None:
-    if temp_ball.collidelist(course) != -1:
+def detect_collision(course: list[Rect], hole: Rect, ball: Rect) -> None:
+    if ball.collidelist(course) != -1:
         PLAYER_POS.x = PLAYER_START.x
         PLAYER_POS.y = PLAYER_START.y
+    elif ball.colliderect(hole):
+        # TODO: display you win text
+        print("YOU WIN")
 
 
 def move_ball() -> None:
@@ -55,10 +58,14 @@ def move_ball() -> None:
         PLAYER_POS.x += BALL_SPEED * DELTA_TIME
 
 
-def draw_course() -> list[Rect]:
+def draw_course() -> tuple[list[Rect], Rect]:
     global PLAYER_START, PLAYER_POS
     box_size = 40
+    hole_size = 20
     course: list[Rect] = []
+    hole: Rect = pygame.draw.circle(
+        SCREEN, "black", Vector2(hole_size, hole_size), hole_size
+    )
 
     for y, row in enumerate(COURSE):
         for x, value in enumerate(row):
@@ -76,12 +83,11 @@ def draw_course() -> list[Rect]:
                     (x * box_size) + (BALL_SIZE * 2), y * box_size + BALL_SIZE
                 )
                 PLAYER_POS = Vector2(PLAYER_START)
-            if value == 3:
-                hole_size = 20
+            elif value == 3:
                 hole_pos = Vector2(x * box_size + hole_size, y * box_size + hole_size)
-                pygame.draw.circle(SCREEN, "black", hole_pos, hole_size)
+                hole = pygame.draw.circle(SCREEN, "black", hole_pos, hole_size)
 
-    return course
+    return course, hole
 
 
 def draw_hole() -> Rect:
@@ -89,28 +95,34 @@ def draw_hole() -> Rect:
     return pygame.draw.circle(SCREEN, "black", hole_pos, 20)
 
 
-while RUNNING:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            RUNNING = False
+def main():
+    global RUNNING, DELTA_TIME
 
-    # fill the screen with a color to wipe away anything from last frame
-    SCREEN.fill("green")
-    course = draw_course()
-    ball = pygame.draw.circle(SCREEN, "white", PLAYER_POS, BALL_SIZE)
+    while RUNNING:
+        # poll for events
+        # pygame.QUIT event means the user clicked X to close your window
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                RUNNING = False
 
-    # draw_hole()
-    move_ball()
-    check_bounds()
-    detect_collision(course, ball)
+        # fill the screen with a color to wipe away anything from last frame
+        SCREEN.fill("green")
+        course, hole = draw_course()
+        ball = pygame.draw.circle(SCREEN, "white", PLAYER_POS, BALL_SIZE)
 
-    # flip() the display to put your work on screen
-    pygame.display.flip()
+        # draw_hole()
+        move_ball()
+        check_bounds()
+        detect_collision(course, hole, ball)
 
-    # limits FPS to 60
-    # delta time in seconds since last frame, used for framerate-independent physics.
-    DELTA_TIME = CLOCK.tick(60) / 1000
+        # flip() the display to put your work on screen
+        pygame.display.flip()
 
-pygame.quit()
+        # limits FPS to 60
+        # delta time in seconds since last frame, used for framerate-independent physics.
+        DELTA_TIME = CLOCK.tick(60) / 1000
+
+    pygame.quit()
+
+
+main()
