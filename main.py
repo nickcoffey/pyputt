@@ -1,5 +1,6 @@
 # Example file showing a circle moving on screen
 import pygame
+import json
 from pygame.rect import Rect
 
 # pygame setup
@@ -10,7 +11,7 @@ RUNNING = True
 DELTA_TIME = 0
 
 BALL_SPEED = 600
-BALL_SIZE = 40
+BALL_SIZE = 10
 BALL_RADIUS = BALL_SIZE / 2
 PLAYER_START = pygame.Vector2(BALL_SIZE + 20, SCREEN.get_height() - BALL_SIZE - 20)
 PLAYER_POS = pygame.Vector2(PLAYER_START)
@@ -47,29 +48,20 @@ def move_ball() -> None:
         PLAYER_POS.x += BALL_SPEED * DELTA_TIME
 
 
-COURSE = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-]
+with open("course.json", encoding="utf-8") as f_in:
+    COURSE = json.load(f_in)
 
 
 def draw_course():
-    box_size = 80
+    box_size = 40
     for y, row in enumerate(COURSE):
         for x, value in enumerate(row):
             if value == 1:
                 pygame.draw.rect(
                     SCREEN,
                     "brown",
-                    pygame.Rect(x * box_size, y * box_size, 80, 80),
-                    BALL_SIZE,
+                    pygame.Rect(x * box_size, y * box_size, box_size, box_size),
+                    box_size,
                 )
 
 
