@@ -37,8 +37,8 @@ def check_bounds() -> None:
         PLAYER_POS.y = SCREEN.get_height() - BALL_SIZE
 
 
-def detect_collision(temp_course: Rect, temp_ball: Rect) -> None:
-    if temp_course.colliderect(temp_ball):
+def detect_collision(course: list[Rect], temp_ball: Rect) -> None:
+    if temp_ball.collidelist(course) != -1:
         PLAYER_POS.x = PLAYER_START.x
         PLAYER_POS.y = PLAYER_START.y
 
@@ -55,17 +55,21 @@ def move_ball() -> None:
         PLAYER_POS.x += BALL_SPEED * DELTA_TIME
 
 
-def draw_course():
+def draw_course() -> list[Rect]:
     global PLAYER_START, PLAYER_POS
     box_size = 40
+    course: list[Rect] = []
+
     for y, row in enumerate(COURSE):
         for x, value in enumerate(row):
             if value == 1:
-                pygame.draw.rect(
-                    SCREEN,
-                    "brown",
-                    pygame.Rect(x * box_size, y * box_size, box_size, box_size),
-                    box_size,
+                course.append(
+                    pygame.draw.rect(
+                        SCREEN,
+                        "brown",
+                        pygame.Rect(x * box_size, y * box_size, box_size, box_size),
+                        box_size,
+                    )
                 )
             elif value == 2 and PLAYER_START is None:
                 PLAYER_START = Vector2(
@@ -76,6 +80,8 @@ def draw_course():
                 hole_size = 20
                 hole_pos = Vector2(x * box_size + hole_size, y * box_size + hole_size)
                 pygame.draw.circle(SCREEN, "black", hole_pos, hole_size)
+
+    return course
 
 
 def draw_hole() -> Rect:
@@ -92,13 +98,13 @@ while RUNNING:
 
     # fill the screen with a color to wipe away anything from last frame
     SCREEN.fill("green")
-    draw_course()
+    course = draw_course()
     ball = pygame.draw.circle(SCREEN, "white", PLAYER_POS, BALL_SIZE)
 
     # draw_hole()
     move_ball()
     check_bounds()
-    # detect_collision(course, ball)
+    detect_collision(course, ball)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
