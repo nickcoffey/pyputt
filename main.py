@@ -2,6 +2,7 @@
 import pygame
 import json
 
+from time import sleep
 from typing import Any
 from pygame.math import Vector2
 from pygame.rect import Rect
@@ -23,6 +24,10 @@ BALL_RADIUS = BALL_SIZE / 2
 PLAYER_START: Any = None
 PLAYER_POS: Any = None
 
+FONT = pygame.font.Font("Futura.ttc", 72)
+WINNER_TEXT = FONT.render("You Win!!!", True, (255, 255, 255))
+WINNER_TEXT_RECT = WINNER_TEXT.get_rect(center=(1280 / 2, 720 / 2))
+
 
 def check_bounds() -> None:
     # left & right bounds of screen
@@ -42,8 +47,7 @@ def detect_collision(course: list[Rect], hole: Rect, ball: Rect) -> None:
         PLAYER_POS.x = PLAYER_START.x
         PLAYER_POS.y = PLAYER_START.y
     elif ball.colliderect(hole):
-        # TODO: display you win text
-        print("YOU WIN")
+        SCREEN.blit(WINNER_TEXT, WINNER_TEXT_RECT)
 
 
 def move_ball() -> None:
