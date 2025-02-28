@@ -67,9 +67,15 @@ def draw_course():
                     pygame.Rect(x * box_size, y * box_size, box_size, box_size),
                     box_size,
                 )
-            if PLAYER_START is None and value == 2:
-                PLAYER_START = Vector2((x * box_size) + (BALL_SIZE * 2), y * box_size)
+            elif value == 2 and PLAYER_START is None:
+                PLAYER_START = Vector2(
+                    (x * box_size) + (BALL_SIZE * 2), y * box_size + BALL_SIZE
+                )
                 PLAYER_POS = Vector2(PLAYER_START)
+            if value == 3:
+                hole_size = 20
+                hole_pos = Vector2(x * box_size + hole_size, y * box_size + hole_size)
+                pygame.draw.circle(SCREEN, "black", hole_pos, hole_size)
 
 
 def draw_hole() -> Rect:
@@ -89,7 +95,7 @@ while RUNNING:
     draw_course()
     ball = pygame.draw.circle(SCREEN, "white", PLAYER_POS, BALL_SIZE)
 
-    draw_hole()
+    # draw_hole()
     move_ball()
     check_bounds()
     # detect_collision(course, ball)
