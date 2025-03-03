@@ -82,6 +82,10 @@ def main():
         # fill the screen with a color to wipe away anything from last frame
         SCREEN.fill("green")
 
+        is_mouse_down = bool(pygame.mouse.get_pressed(3)[0])
+        print(is_mouse_down)
+        pygame.draw.circle(SCREEN, "pink", pygame.mouse.get_pos(), 5)
+
         course, hole, ball_start_pos = draw_course(BALL_SIZE, SCREEN)
         if is_first_loop:
             BALL_START_POS = Vector2(ball_start_pos)
