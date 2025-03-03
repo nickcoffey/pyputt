@@ -5,6 +5,7 @@ from typing import Any
 from pygame import Rect, Vector2
 
 from libs.course.course import draw_course
+from libs.pause_handler import PauseHandler
 
 
 # pygame setup
@@ -38,12 +39,20 @@ def check_bounds() -> None:
         BALL_POS.y = SCREEN.get_height() - BALL_SIZE
 
 
-def detect_collision(course: list[Rect], hole: Rect, ball: Rect) -> None:
+def move_ball_to_start():
+    BALL_POS.x = BALL_START_POS.x
+    BALL_POS.y = BALL_START_POS.y
+
+
+def detect_collision(
+    course: list[Rect], hole: Rect, ball: Rect, pause_handler: PauseHandler
+) -> None:
     if ball.collidelist(course) != -1:
-        BALL_POS.x = BALL_START_POS.x
-        BALL_POS.y = BALL_START_POS.y
+        move_ball_to_start()
     elif ball.colliderect(hole):
-        SCREEN.blit(WINNER_TEXT, WINNER_TEXT_RECT)
+        pause_handler.start_pause(
+            3, move_ball_to_start, lambda: SCREEN.blit(WINNER_TEXT, WINNER_TEXT_RECT)
+        )
 
 
 def move_ball() -> None:
@@ -61,6 +70,7 @@ def move_ball() -> None:
 def main():
     global RUNNING, DELTA_TIME, BALL_START_POS, BALL_POS
     is_first_loop = True
+    pause_handler = PauseHandler()
 
     while RUNNING:
         # poll for events
@@ -79,9 +89,12 @@ def main():
 
         ball = pygame.draw.circle(SCREEN, "white", BALL_POS, BALL_SIZE)
 
-        move_ball()
-        check_bounds()
-        detect_collision(course, hole, ball)
+        if pause_handler.is_paused:
+            pause_handler.decrement_frames(DELTA_TIME)
+        else:
+            move_ball()
+            check_bounds()
+            detect_collision(course, hole, ball, pause_handler)
 
         # flip() the display to put your work on screen
         pygame.display.flip()
