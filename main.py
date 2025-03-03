@@ -62,10 +62,6 @@ def main():
         # fill the screen with a color to wipe away anything from last frame
         SCREEN.fill("green")
 
-        # is_mouse_down = bool(pygame.mouse.get_pressed(3)[0])
-        # mouse = pygame.draw.circle(SCREEN, "pink", pygame.mouse.get_pos(), 5)
-        mouse.update(SCREEN)
-
         course, hole, ball_start_pos = draw_course(ball.size, SCREEN)
 
         if is_first_loop:
@@ -73,6 +69,7 @@ def main():
             ball.position = Vector2(ball_start_pos)
 
         ball.draw(SCREEN)
+        mouse.update(SCREEN, ball.rect)
 
         if pause_handler.is_paused:
             pause_handler.decrement_frames(DELTA_TIME)
