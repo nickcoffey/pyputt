@@ -1,4 +1,6 @@
+from typing import Any
 import pygame
+import libs
 
 from pygame import Rect, Surface, Vector2
 
@@ -10,9 +12,12 @@ class Ball:
         self.radius = self.size / 2
         self.start_position = Vector2(0, 0)
         self.position = Vector2(0, 0)
+        self.collidables: list[libs.Collidable] = []
+        self.rect: Rect
 
     def draw(self, screen: Surface) -> Rect:
-        return pygame.draw.circle(screen, "white", self.position, self.size)
+        self.rect = pygame.draw.circle(screen, "white", self.position, self.size)
+        return self.rect
 
     def move(self, delta_time: float) -> None:
         keys = pygame.key.get_pressed()
@@ -40,3 +45,13 @@ class Ball:
             self.position.y = self.size
         elif self.position.y > screen.get_height() - self.size:
             self.position.y = screen.get_height() - self.size
+
+    # TODO: fix this typing. this is fixing weird import errors
+    def add_collidable(self, new_collidable: Any):
+        self.collidables.append(new_collidable)
+
+    def check_collidables(self):
+        for collidable in self.collidables:
+            if collidable.collision_check(self):
+                collidable.collision_action(self)
+                break
