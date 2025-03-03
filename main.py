@@ -68,7 +68,7 @@ def main():
             ball.start_position = Vector2(ball_start_pos)
             ball.position = Vector2(ball_start_pos)
 
-        ball.draw(SCREEN)
+        ball.draw(SCREEN, DELTA_TIME)
         mouse.update(SCREEN, ball.rect, ball.mouse_move)
 
         if pause_handler.is_paused:
