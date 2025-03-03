@@ -6,6 +6,7 @@ from pygame import Vector2
 from libs.ball import Ball
 from libs.collidable import Collidable
 from libs.course.course import draw_course
+from libs.mouse import Mouse
 from libs.pause_handler import PauseHandler
 
 
@@ -27,6 +28,30 @@ def main():
     pause_handler = PauseHandler()
     ball = Ball()
 
+    course_collidable = Collidable(
+        collision_check=lambda ball: ball.rect.collidelist(course) != -1,
+        collision_action=lambda ball: ball.move_to_start(),
+    )
+    ball.add_collidable(course_collidable)
+
+    hole_collidable = Collidable(
+        collision_check=lambda ball: ball.rect.colliderect(hole),
+        collision_action=lambda ball: pause_handler.start_pause(
+            3,
+            ball.move_to_start,
+            lambda: SCREEN.blit(WINNER_TEXT, WINNER_TEXT_RECT),
+        ),
+    )
+    ball.add_collidable(hole_collidable)
+
+    mouse = Mouse()
+
+    mouse_collidable = Collidable(
+        collision_check=lambda ball: ball.rect.colliderect(mouse.rect),
+        collision_action=lambda ball: mouse.ball_collision_action(),
+    )
+    ball.add_collidable(mouse_collidable)
+
     while RUNNING:
         # poll for events
         # pygame.QUIT event means the user clicked X to close your window
@@ -38,25 +63,10 @@ def main():
         SCREEN.fill("green")
 
         # is_mouse_down = bool(pygame.mouse.get_pressed(3)[0])
-        # print(is_mouse_down)
-        # pygame.draw.circle(SCREEN, "pink", pygame.mouse.get_pos(), 5)
+        # mouse = pygame.draw.circle(SCREEN, "pink", pygame.mouse.get_pos(), 5)
+        mouse.update(SCREEN)
 
         course, hole, ball_start_pos = draw_course(ball.size, SCREEN)
-        course_collidable = Collidable(
-            collision_check=lambda ball: ball.rect.collidelist(course) != -1,
-            collision_action=lambda ball: ball.move_to_start(),
-        )
-        ball.add_collidable(course_collidable)
-
-        hole_collidable = Collidable(
-            collision_check=lambda ball: ball.rect.colliderect(hole),
-            collision_action=lambda ball: pause_handler.start_pause(
-                3,
-                ball.move_to_start,
-                lambda: SCREEN.blit(WINNER_TEXT, WINNER_TEXT_RECT),
-            ),
-        )
-        ball.add_collidable(hole_collidable)
 
         if is_first_loop:
             ball.start_position = Vector2(ball_start_pos)
