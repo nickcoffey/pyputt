@@ -11,22 +11,33 @@ class Mouse:
         self.mouse_color = "red"
 
     def update(self, screen: Surface, ball_rect: Rect) -> None:
-        self.rect = pygame.draw.circle(
-            screen, self.mouse_color, pygame.mouse.get_pos(), 5
-        )
+        position = pygame.mouse.get_pos()
+
+        self.rect = pygame.draw.circle(screen, self.mouse_color, position, 5)
         self.is_left_click_down = bool(pygame.mouse.get_pressed(3)[0])
 
         if not self.is_left_click_down:
             self.is_dragging = False
 
         if self.is_dragging:
-            temp_mouse_pos = pygame.mouse.get_pos()
-            flipped_mouse_x = ball_rect.center[0] + (
-                ball_rect.center[0] - temp_mouse_pos[0]
-            )
-            flipped_mouse_y = ball_rect.center[1] + (
-                ball_rect.center[1] - temp_mouse_pos[1]
-            )
+            line_max = 150
+            x_diff = ball_rect.center[0] - position[0]
+            y_diff = ball_rect.center[1] - position[1]
+
+            x_max = line_max - 2
+            if x_diff < -x_max:
+                x_diff = -x_max
+            elif x_diff > x_max:
+                x_diff = x_max
+
+            y_max = line_max - 1
+            if y_diff < -y_max:
+                y_diff = -y_max
+            elif y_diff > y_max:
+                y_diff = y_max
+
+            flipped_mouse_x = ball_rect.center[0] + x_diff
+            flipped_mouse_y = ball_rect.center[1] + y_diff
 
             oppo_mouse = pygame.draw.circle(
                 screen, self.mouse_color, (flipped_mouse_x, flipped_mouse_y), 5
