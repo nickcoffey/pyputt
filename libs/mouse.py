@@ -1,3 +1,4 @@
+from typing import Callable
 import pygame
 
 from pygame import Rect, Surface
@@ -9,15 +10,22 @@ class Mouse:
         self.is_left_click_down = False
         self.is_dragging = False
         self.mouse_color = "red"
+        self.shot_power = (0, 0)
 
-    def update(self, screen: Surface, ball_rect: Rect) -> None:
+    def update(
+        self,
+        screen: Surface,
+        ball_rect: Rect,
+        move_ball: Callable[[tuple[int, int]], None],
+    ) -> None:
         position = pygame.mouse.get_pos()
 
         self.rect = pygame.draw.circle(screen, self.mouse_color, position, 5)
         self.is_left_click_down = bool(pygame.mouse.get_pressed(3)[0])
 
-        if not self.is_left_click_down:
+        if self.is_dragging is True and not self.is_left_click_down:
             self.is_dragging = False
+            move_ball(self.shot_power)
 
         if self.is_dragging:
             line_max = 150
@@ -42,9 +50,18 @@ class Mouse:
             oppo_mouse = pygame.draw.circle(
                 screen, self.mouse_color, (flipped_mouse_x, flipped_mouse_y), 5
             )
-            pygame.draw.line(
+            line = pygame.draw.line(
                 screen, self.mouse_color, ball_rect.center, oppo_mouse.center, 2
             )
+            x_power = line.size[0]
+            if x_diff < 0:
+                x_power = -x_power
+
+            y_power = line.size[1]
+            if y_diff < 0:
+                y_power = -y_power
+
+            self.shot_power = (x_power, y_power)
 
     def ball_collision_action(self):
         if self.is_left_click_down:

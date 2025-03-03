@@ -30,6 +30,10 @@ class Ball:
         if keys[pygame.K_l] or keys[pygame.K_d]:
             self.position.x += self.speed * delta_time
 
+    def mouse_move(self, power: tuple[int, int]) -> None:
+        self.position.x += power[0]
+        self.position.y += power[1]
+
     def move_to_start(self) -> None:
         self.position.x = self.start_position.x
         self.position.y = self.start_position.y
