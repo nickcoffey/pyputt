@@ -1,6 +1,6 @@
-from typing import Callable
 import pygame
 
+from typing import Callable
 from pygame import Rect, Surface
 
 
@@ -11,12 +11,13 @@ class Mouse:
         self.is_dragging = False
         self.mouse_color = "red"
         self.shot_power = (0, 0)
+        self.line_max = 150
 
     def update(
         self,
         screen: Surface,
         ball_rect: Rect,
-        move_ball: Callable[[tuple[int, int]], None],
+        move_ball: Callable[[tuple[int, int], int], None],
     ) -> None:
         position = pygame.mouse.get_pos()
 
@@ -25,20 +26,19 @@ class Mouse:
 
         if self.is_dragging is True and not self.is_left_click_down:
             self.is_dragging = False
-            move_ball(self.shot_power)
+            move_ball(self.shot_power, self.line_max)
 
         if self.is_dragging:
-            line_max = 150
             x_diff = ball_rect.center[0] - position[0]
             y_diff = ball_rect.center[1] - position[1]
 
-            x_max = line_max - 2
+            x_max = self.line_max - 2
             if x_diff < -x_max:
                 x_diff = -x_max
             elif x_diff > x_max:
                 x_diff = x_max
 
-            y_max = line_max - 1
+            y_max = self.line_max - 1
             if y_diff < -y_max:
                 y_diff = -y_max
             elif y_diff > y_max:
