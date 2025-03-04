@@ -1,0 +1,16 @@
+# Create a ball with custom config
+config = BallConfig(speed=800, size=15, color="red", gravity=5.0)
+ball = Ball(config)
+
+# Set starting position
+ball.set_position(100, 100)
+ball.move_to_start()
+
+# In game loop
+ball.move(delta_time)
+ball.check_bounds(screen)
+ball.check_collidables()
+ball.draw(screen, delta_time)
+
+# Launch with mouse power
+ball.launch((50, -75), max_power=100)
