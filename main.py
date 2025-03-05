@@ -5,7 +5,7 @@ from pygame import Vector2
 
 from libs.ball import Ball
 from libs.collidable import Collidable
-from libs.course.course import draw_course, load_next_level
+from libs.course.course import draw_course, load_next_level, MAX_LEVEL
 from libs.mouse import Mouse
 from libs.pause_handler import PauseHandler
 
@@ -16,12 +16,24 @@ SCREEN = pygame.display.set_mode((1280, 720))
 CLOCK = pygame.time.Clock()
 RUNNING = True
 DELTA_TIME = 0
-
-FONT = pygame.font.Font("Futura.ttc", 72)
-WINNER_TEXT = FONT.render("You Win!!!", True, (255, 255, 255), (0, 0, 0))
-WINNER_TEXT_RECT = WINNER_TEXT.get_rect(center=(1280 / 2, 720 / 2))
-
 COURSE_COLLISION_IDX_LIST = []
+FONT = pygame.font.Font("Futura.ttc", 72)
+WINNER_TEXT_LIST = [
+    FONT.render(f"Level {level} Complete!", True, (255, 255, 255), (0, 0, 0))
+    for level in range(1, MAX_LEVEL + 1)
+]
+WINNER_TEXT_RECT_LIST = [
+    winner_text.get_rect(center=(1280 / 2, 720 / 2)) for winner_text in WINNER_TEXT_LIST
+]
+
+
+def hole_pause_action():
+    from libs.course.course import (  # pylint: disable=import-outside-toplevel
+        LEVEL_NUM,
+    )
+
+    level_idx = LEVEL_NUM - 1
+    SCREEN.blit(WINNER_TEXT_LIST[level_idx], WINNER_TEXT_RECT_LIST[level_idx])
 
 
 def main():
@@ -63,10 +75,10 @@ def main():
 
     hole_collidable = Collidable(
         collision_check=lambda ball: hole.collidepoint(ball.rect.center),
-        collision_action=lambda ball: pause_handler.start_pause(
+        collision_action=lambda _: pause_handler.start_pause(
             3,
             load_next_level,
-            lambda: SCREEN.blit(WINNER_TEXT, WINNER_TEXT_RECT),
+            hole_pause_action,
         ),
     )
     ball.add_collidable(hole_collidable)
@@ -75,7 +87,7 @@ def main():
 
     mouse_collidable = Collidable(
         collision_check=lambda ball: ball.rect.colliderect(mouse.rect),
-        collision_action=lambda ball: mouse.ball_collision_action(),
+        collision_action=lambda _: mouse.ball_collision_action(),
     )
     ball.add_collidable(mouse_collidable)
 

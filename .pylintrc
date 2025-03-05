@@ -145,7 +145,8 @@ disable=R,
         zip-builtin-not-iterating,
         zip-builtin-not-iterating,
 ####### CUSTOM IGNORES
-        missing-module-docstring
+        missing-module-docstring,
+        missing-class-docstring
 
 
 [REPORTS]

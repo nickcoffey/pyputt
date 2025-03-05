@@ -5,6 +5,7 @@ from pygame import Rect, Surface, Vector2
 
 COURSE_GRID = [[]]
 LEVEL_NUM = 0
+MAX_LEVEL = 2
 
 
 def load_next_level():
