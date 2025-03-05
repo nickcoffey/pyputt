@@ -5,7 +5,7 @@ from pygame import Vector2
 
 from libs.ball import Ball
 from libs.collidable import Collidable
-from libs.course.course import draw_course
+from libs.course.course import draw_course, load_next_level
 from libs.mouse import Mouse
 from libs.pause_handler import PauseHandler
 
@@ -65,7 +65,7 @@ def main():
         collision_check=lambda ball: hole.collidepoint(ball.rect.center),
         collision_action=lambda ball: pause_handler.start_pause(
             3,
-            ball.move_to_start,
+            load_next_level,
             lambda: SCREEN.blit(WINNER_TEXT, WINNER_TEXT_RECT),
         ),
     )
@@ -88,7 +88,7 @@ def main():
 
         course, hole, ball_start_pos = draw_course(SCREEN)
 
-        if is_first_loop:
+        if is_first_loop or ball_start_pos != ball.start_position:
             ball.start_position = Vector2(ball_start_pos)
             ball.position = Vector2(ball_start_pos)
 

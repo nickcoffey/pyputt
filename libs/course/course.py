@@ -3,9 +3,19 @@ import pygame
 
 from pygame import Rect, Surface, Vector2
 
+COURSE_GRID = [[]]
+LEVEL_NUM = 0
 
-with open("libs/course/data/level_1.json", encoding="utf-8") as f_in:
-    COURSE_GRID = json.load(f_in)
+
+def load_next_level():
+    global COURSE_GRID, LEVEL_NUM
+    LEVEL_NUM += 1
+
+    with open(f"libs/course/data/level_{LEVEL_NUM}.json", encoding="utf-8") as f_in:
+        COURSE_GRID = json.load(f_in)
+
+
+load_next_level()
 
 
 def draw_course(screen: Surface) -> tuple[list[Rect], Rect, Vector2]:
