@@ -86,10 +86,7 @@ def main():
             if event.type == pygame.QUIT:
                 RUNNING = False
 
-        # fill the screen with a color to wipe away anything from last frame
-        SCREEN.fill("green")
-
-        course, hole, ball_start_pos = draw_course(ball.size, SCREEN)
+        course, hole, ball_start_pos = draw_course(SCREEN)
 
         if is_first_loop:
             ball.start_position = Vector2(ball_start_pos)
