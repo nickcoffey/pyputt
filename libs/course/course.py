@@ -4,7 +4,7 @@ import pygame
 from pygame import Rect, Surface, Vector2
 
 
-with open("libs/course/course_grid.json", encoding="utf-8") as f_in:
+with open("libs/course/data/level_1.json", encoding="utf-8") as f_in:
     COURSE_GRID = json.load(f_in)
 
 
