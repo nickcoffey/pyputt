@@ -62,7 +62,7 @@ def main():
     ball.add_collidable(course_collidable)
 
     hole_collidable = Collidable(
-        collision_check=lambda ball: ball.rect.colliderect(hole),
+        collision_check=lambda ball: hole.collidepoint(ball.rect.center),
         collision_action=lambda ball: pause_handler.start_pause(
             3,
             ball.move_to_start,
@@ -99,6 +99,7 @@ def main():
         mouse.update(SCREEN, ball.rect, ball.mouse_move)
 
         if pause_handler.is_paused:
+            ball.speed_multiplier = 0
             pause_handler.decrement_frames(DELTA_TIME)
         else:
             ball.move(DELTA_TIME)
