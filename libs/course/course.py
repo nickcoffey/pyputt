@@ -2,15 +2,19 @@ import json
 import pygame
 
 from pygame import Rect, Surface, Vector2
+from libs.par_tracker import ParTracker
 
 COURSE_GRID = [[]]
 LEVEL_NUM = 0
 MAX_LEVEL = 3
 
+par_tracker = ParTracker()
+
 
 def load_next_level():
     global COURSE_GRID, LEVEL_NUM
     LEVEL_NUM += 1
+    par_tracker.shots = 0
 
     with open(f"libs/course/data/level_{LEVEL_NUM}.json", encoding="utf-8") as f_in:
         COURSE_GRID = json.load(f_in)

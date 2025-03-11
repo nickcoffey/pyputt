@@ -7,17 +7,21 @@ from libs.ball import Ball
 from libs.collidable import Collidable
 from libs.course.course import draw_course, load_next_level, MAX_LEVEL
 from libs.mouse import Mouse
+from libs.par_tracker import ParTracker
 from libs.pause_handler import PauseHandler
 
 
 # pygame setup
 pygame.init()
+pygame.display.set_caption("PyPutt", "PyPutt")
+
 SCREEN = pygame.display.set_mode((1280, 720))
 CLOCK = pygame.time.Clock()
 RUNNING = True
 DELTA_TIME = 0
 COURSE_COLLISION_IDX_LIST = []
 FONT = pygame.font.Font("Futura.ttc", 72)
+SMALL_FONT = pygame.font.Font("Futura.ttc", 24)
 WINNER_TEXT_LIST = [
     FONT.render(f"Level {level} Complete!", True, (255, 255, 255), (0, 0, 0))
     for level in range(1, MAX_LEVEL + 1)
@@ -40,7 +44,12 @@ def main():
     global RUNNING, DELTA_TIME
     is_first_loop = True
     pause_handler = PauseHandler()
+    par_tracker = ParTracker()
     ball = Ball()
+
+    def move_ball(power: tuple[int, int], max_power: int):
+        ball.mouse_move(power, max_power)
+        par_tracker.shots += 1
 
     def course_collision_check(ball: Ball):
         global COURSE_COLLISION_IDX_LIST
@@ -105,7 +114,7 @@ def main():
             ball.position = Vector2(ball_start_pos)
 
         ball.draw(SCREEN, DELTA_TIME)
-        mouse.update(SCREEN, ball.rect, ball.mouse_move)
+        mouse.update(SCREEN, ball.rect, move_ball)
 
         if pause_handler.is_paused:
             ball.speed_multiplier = 0
@@ -114,6 +123,15 @@ def main():
             ball.move(DELTA_TIME)
             ball.check_bounds(SCREEN)
             ball.check_collidables()
+
+        shot_text = SMALL_FONT.render(
+            f"Par: {par_tracker.par} | Shots: {par_tracker.shots}",
+            True,
+            (255, 255, 255),
+            (0, 0, 0),
+        )
+        shot_text_rect = shot_text.get_rect(topleft=(0, 0))
+        SCREEN.blit(shot_text, shot_text_rect)
 
         # flip() the display to put your work on screen
         pygame.display.flip()
