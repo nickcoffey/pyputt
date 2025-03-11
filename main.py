@@ -18,6 +18,7 @@ pygame.display.set_caption("PyPutt", "PyPutt")
 SCREEN = pygame.display.set_mode((1280, 720))
 CLOCK = pygame.time.Clock()
 RUNNING = True
+GAME_OVER = False
 DELTA_TIME = 0
 COURSE_COLLISION_IDX_LIST = []
 FONT = pygame.font.Font("Futura.ttc", 72)
@@ -40,8 +41,14 @@ def hole_pause_action():
     SCREEN.blit(WINNER_TEXT_LIST[level_idx], WINNER_TEXT_RECT_LIST[level_idx])
 
 
+def hole_resume_action():
+    global GAME_OVER
+    is_game_over = load_next_level()
+    GAME_OVER = is_game_over
+
+
 def main():
-    global RUNNING, DELTA_TIME
+    global RUNNING, DELTA_TIME, GAME_OVER
     is_first_loop = True
     pause_handler = PauseHandler()
     par_tracker = ParTracker()
@@ -86,7 +93,7 @@ def main():
         collision_check=lambda ball: hole.collidepoint(ball.rect.center),
         collision_action=lambda _: pause_handler.start_pause(
             3,
-            load_next_level,
+            hole_resume_action,
             hole_pause_action,
         ),
     )
@@ -106,6 +113,11 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 RUNNING = False
+
+        if GAME_OVER:
+            par_tracker.show_game_over_screen(SCREEN, FONT)
+            pygame.display.flip()
+            continue
 
         course, hole, ball_start_pos = draw_course(SCREEN)
 

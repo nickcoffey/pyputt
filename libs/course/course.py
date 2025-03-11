@@ -11,17 +11,19 @@ MAX_LEVEL = 9
 par_tracker = ParTracker()
 
 
-def load_next_level():
+def load_next_level() -> bool:
     global COURSE_GRID, LEVEL_NUM
     LEVEL_NUM += 1
 
     if LEVEL_NUM > MAX_LEVEL:
-        print("Last hole completed")
+        return True
 
     with open(f"libs/course/data/level_{LEVEL_NUM}.json", encoding="utf-8") as f_in:
         level = json.load(f_in)
         COURSE_GRID = level["course"]
         par_tracker.next_hole(level["par"])
+
+    return False
 
 
 load_next_level()
