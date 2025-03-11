@@ -6,7 +6,7 @@ from libs.par_tracker import ParTracker
 
 COURSE_GRID = [[]]
 LEVEL_NUM = 0
-MAX_LEVEL = 3
+MAX_LEVEL = 9
 
 par_tracker = ParTracker()
 
@@ -14,12 +14,14 @@ par_tracker = ParTracker()
 def load_next_level():
     global COURSE_GRID, LEVEL_NUM
     LEVEL_NUM += 1
-    par_tracker.shots = 0
+
+    if LEVEL_NUM > MAX_LEVEL:
+        print("Last hole completed")
 
     with open(f"libs/course/data/level_{LEVEL_NUM}.json", encoding="utf-8") as f_in:
         level = json.load(f_in)
         COURSE_GRID = level["course"]
-        par_tracker.par = level["par"]
+        par_tracker.next_hole(level["par"])
 
 
 load_next_level()
