@@ -17,7 +17,9 @@ def load_next_level():
     par_tracker.shots = 0
 
     with open(f"libs/course/data/level_{LEVEL_NUM}.json", encoding="utf-8") as f_in:
-        COURSE_GRID = json.load(f_in)
+        level = json.load(f_in)
+        COURSE_GRID = level["course"]
+        par_tracker.par = level["par"]
 
 
 load_next_level()
